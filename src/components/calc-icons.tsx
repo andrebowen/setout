@@ -1,0 +1,33 @@
+import {
+  BrickWall,
+  Columns3,
+  Fence,
+  Grid2x2,
+  Hammer,
+  House,
+  LayoutGrid,
+  Layers,
+  PaintRoller,
+  PanelsTopLeft,
+  Shovel,
+  Square,
+  Triangle,
+  type LucideIcon,
+} from "lucide-react";
+
+export const CALC_ICONS: Record<string, LucideIcon> = {
+  decking: LayoutGrid,
+  corrugated: House,
+  pitch: Triangle,
+  stairs: Layers,
+  balustrade: Columns3,
+  concrete: Square,
+  framing: Hammer,
+  flooring: Grid2x2,
+  tiling: Grid2x2,
+  paint: PaintRoller,
+  plasterboard: PanelsTopLeft,
+  fencing: Fence,
+  brickwork: BrickWall,
+  excavation: Shovel,
+};

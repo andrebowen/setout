@@ -11,34 +11,35 @@ export type SavedJob = {
 };
 
 type Persisted = {
-  recents: string[];
   inputsBySlug: Record<string, Inputs>;
   jobs: SavedJob[];
+  favorites?: string[];
 };
 
 type Store = Persisted & {
   hydrated: boolean;
   hydrate: () => void;
-  touchRecent: (slug: string) => void;
   setInputs: (slug: string, inputs: Inputs) => void;
   saveJob: (job: Omit<SavedJob, "id" | "savedAt">) => string;
   deleteJob: (id: string) => void;
   renameJob: (id: string, name: string) => void;
+  favorites: string[];
+  toggleFavorite: (slug: string) => void;
 };
 
 const KEY = "setout.v1";
 
 function load(): Persisted {
-  const empty: Persisted = { recents: [], inputsBySlug: {}, jobs: [] };
+  const empty: Persisted = { inputsBySlug: {}, jobs: [], favorites: [] };
   if (typeof window === "undefined") return empty;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return empty;
     const parsed = JSON.parse(raw) as Partial<Persisted>;
     return {
-      recents: Array.isArray(parsed.recents) ? parsed.recents : [],
       inputsBySlug: parsed.inputsBySlug && typeof parsed.inputsBySlug === "object" ? parsed.inputsBySlug : {},
       jobs: Array.isArray(parsed.jobs) ? parsed.jobs : [],
+      favorites: Array.isArray(parsed.favorites) ? parsed.favorites : [],
     };
   } catch {
     return empty;
@@ -48,27 +49,21 @@ function load(): Persisted {
 function persist(state: Store) {
   if (typeof window === "undefined") return;
   const data: Persisted = {
-    recents: state.recents,
     inputsBySlug: state.inputsBySlug,
     jobs: state.jobs,
+    favorites: state.favorites ?? [],
   };
   window.localStorage.setItem(KEY, JSON.stringify(data));
 }
 
 export const useStore = create<Store>((set, get) => ({
-  recents: [],
   inputsBySlug: {},
   jobs: [],
+  favorites: [],
   hydrated: false,
   hydrate: () => {
     if (get().hydrated) return;
     set({ ...load(), hydrated: true });
-  },
-  touchRecent: (slug) => {
-    set((s) => ({
-      recents: [slug, ...s.recents.filter((x) => x !== slug)].slice(0, 8),
-    }));
-    persist(get());
   },
   setInputs: (slug, inputs) => {
     set((s) => ({ inputsBySlug: { ...s.inputsBySlug, [slug]: inputs } }));
@@ -93,6 +88,16 @@ export const useStore = create<Store>((set, get) => ({
     set((s) => ({
       jobs: s.jobs.map((j) => (j.id === id ? { ...j, name } : j)),
     }));
+    persist(get());
+  },
+  toggleFavorite: (slug) => {
+    set((s) => {
+      const favs = new Set(s.favorites ?? []);
+      if (favs.has(slug)) favs.delete(slug);
+      else favs.add(slug);
+      const next = Array.from(favs);
+      return { favorites: next };
+    });
     persist(get());
   },
 }));

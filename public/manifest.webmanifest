@@ -1,0 +1,21 @@
+{
+  "name": "Setout",
+  "short_name": "Setout",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#efece3",
+  "theme_color": "#efece3",
+  "description": "Metric site calculations for builders and trades — decking, roofing, stairs, balustrades and more.",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

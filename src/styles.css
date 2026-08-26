@@ -2,15 +2,19 @@
 @import "tw-animate-css";
 
 @theme {
-  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Barlow", ui-sans-serif,
+    system-ui, sans-serif;
+  --font-display:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Barlow Condensed",
+    "Barlow", ui-sans-serif, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
   --color-background: #efece3;
   --color-foreground: #1b1914;
   --color-card: #f6f3eb;
   --color-muted: #6f6a60;
-  --color-subtle: #9a9488;
+  --color-subtle: #6f6a60; /* increased contrast vs background */
   --color-border: #d8d1c3;
   --color-primary: #1b1914;
   --color-primary-foreground: #efece3;
@@ -31,10 +35,51 @@
     0 2px 6px 0 color-mix(in oklab, var(--color-foreground) 5%, transparent);
 }
 
+:root[data-theme="dark"] {
+  /* Dark theme: only enabled when the root element has data-theme="dark" */
+  color-scheme: dark;
+  --color-background: #171512;
+  --color-foreground: #f3efe9;
+  --color-card: #1f1c19;
+  --color-muted: #b8b0a6;
+  --color-subtle: #9c948b;
+  --color-border: #3a342e;
+  --color-primary: #f3efe9;
+  --color-primary-foreground: #171512;
+  --color-ok: #8fd2ad;
+  --color-warn: #f1b86d;
+  --color-danger: #f08d7f;
+  --color-ring: #f3efe9;
+}
+
+/* Auto-apply system dark mode when no explicit data-theme is set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-background: #171512;
+    --color-foreground: #f3efe9;
+    --color-card: #1f1c19;
+    --color-muted: #b8b0a6;
+    --color-subtle: #9c948b;
+    --color-border: #3a342e;
+    --color-primary: #f3efe9;
+    --color-primary-foreground: #171512;
+    --color-ok: #8fd2ad;
+    --color-warn: #f1b86d;
+    --color-danger: #f08d7f;
+    --color-ring: #f3efe9;
+  }
+}
+
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: var(--color-background);
   }
 
   html,
@@ -49,6 +94,9 @@
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.5;
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1,

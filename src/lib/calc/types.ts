@@ -109,7 +109,13 @@ export type DiagramSpec =
 
 export type Inputs = Record<string, number | string>;
 
-export type Category = "Structure" | "Roof" | "Wet trades" | "Site" | "Fit-out";
+export type Category =
+  | "Carpentry"
+  | "Roofing"
+  | "Wet trades"
+  | "Site"
+  | "Fit-out"
+  | "Setout & Measuring";
 
 export type Calculator = {
   slug: string;

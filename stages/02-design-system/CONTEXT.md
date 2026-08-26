@@ -24,6 +24,11 @@ screens, empty/error/loading states.
   live SlabSet mark). Still open: this only fixes the *mark* — Setout still needs
   its own owned icon/manifest set built from it (App Store 1024, iOS ladder,
   splash) per gap #2/#3 in the 01 audit; that's still unbuilt.
+- **2026-08-25 — calculator IA doctrine written.** `output/ia-doctrine.md`: two
+  axes (materials-takeoff vs. setout-math; trade-based sections with a ≥2-item
+  promotion rule) plus a three-way placement rule for setout-math (merge into an
+  existing takeoff calc / separate card same trade / cross-trade "Setout &
+  Measuring" section), applied to the full ex-BuildSet backlog.
 
 ## Do not start the rest of this stage without Andre's go-ahead — this
 workspace is held at the design stage per the current instruction.

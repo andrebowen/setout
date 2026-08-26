@@ -87,15 +87,16 @@ export const deckingFields: Field[] = [
     max: 40,
     step: 1,
   },
-  { kind: "section", label: "Structure" },
+  { kind: "section", label: "Fixing" },
   {
     kind: "number",
     key: "joistSpacing",
-    label: "Joist centres",
+    label: "Fixing centres",
     unit: "mm",
     defaultValue: 450,
     min: 100,
     step: 10,
+    hint: "Where boards screw down to the frame",
     presets: [
       { label: "400", value: 400 },
       { label: "450", value: 450 },
@@ -104,26 +105,8 @@ export const deckingFields: Field[] = [
   },
   {
     kind: "number",
-    key: "bearerSpacing",
-    label: "Bearer centres",
-    unit: "mm",
-    defaultValue: 1800,
-    min: 300,
-    step: 50,
-  },
-  {
-    kind: "number",
-    key: "postSpacing",
-    label: "Post centres (along)",
-    unit: "mm",
-    defaultValue: 1800,
-    min: 300,
-    step: 50,
-  },
-  {
-    kind: "number",
     key: "screwsPerJoist",
-    label: "Screws per joist",
+    label: "Screws per fixing line",
     unit: "count",
     defaultValue: 2,
     min: 1,
@@ -139,8 +122,6 @@ export function computeDecking(inputs: Inputs): CalcOutput {
   const boardGap = num(inputs.boardGap, 5);
   const stockLength = num(inputs.stockLength, 5.4);
   const joistSpacing = num(inputs.joistSpacing, 450);
-  const bearerSpacing = num(inputs.bearerSpacing, 1800);
-  const postSpacing = num(inputs.postSpacing, 1800);
   const waste = num(inputs.waste, 10);
   const screwsPerJoist = num(inputs.screwsPerJoist, 2);
 
@@ -159,23 +140,15 @@ export function computeDecking(inputs: Inputs): CalcOutput {
 
   const nJoists = countInclusive(length * 1000, joistSpacing);
   const actualJoist = nJoists > 1 ? (length * 1000) / (nJoists - 1) : 0;
-  const joistLin = nJoists * width;
-
-  const nBearers = countInclusive(width * 1000, bearerSpacing);
-  const actualBearer = nBearers > 1 ? (width * 1000) / (nBearers - 1) : 0;
-  const bearerLin = nBearers * length;
-
-  const postsAlong = countInclusive(length * 1000, postSpacing);
-  const nPosts = postsAlong * nBearers;
   const screws = nBoards * nJoists * screwsPerJoist;
 
   return {
-    headline: `${formatNumber(nBoards, 0)} boards · ${formatM(linearWaste, 2)} with waste`,
+    headline: `${formatCount(nStock, "stock lengths")} · ${formatM(linearWaste, 2)} linear with waste`,
     kpis: [
       { label: "Area", value: formatM2(area) },
-      { label: "Boards", value: formatNumber(nBoards, 0) },
-      { label: "Linear", value: formatM(linearWaste, 2) },
-      { label: "Joists", value: formatNumber(nJoists, 0) },
+      { label: "Rows across", value: formatNumber(nBoards, 0) },
+      { label: "Stock", value: formatNumber(nStock, 0) },
+      { label: "Screws", value: formatNumber(screws, 0) },
     ],
     sections: [
       {
@@ -209,27 +182,17 @@ export function computeDecking(inputs: Inputs): CalcOutput {
         ],
       },
       {
-        title: "Joists, bearers & posts",
+        title: "Fixing",
         rows: [
           {
-            label: "Joists",
+            label: "Fixing lines",
             value: formatCount(nJoists, "pcs"),
-            hint: `Set out ${formatMm(actualJoist, 0)} centres · ${formatM(joistLin, 2)} linear`,
-          },
-          {
-            label: "Bearers",
-            value: formatCount(nBearers, "pcs"),
-            hint: `Set out ${formatMm(actualBearer, 0)} centres · ${formatM(bearerLin, 2)} linear`,
-          },
-          {
-            label: "Posts",
-            value: formatCount(nPosts, "pcs"),
-            hint: `${formatNumber(postsAlong, 0)} along × ${formatNumber(nBearers, 0)} bearer lines`,
+            hint: `${formatMm(actualJoist, 0)} centres across the length`,
           },
           {
             label: "Deck screws",
             value: formatCount(screws, "screws"),
-            hint: `${formatNumber(screwsPerJoist, 0)} per board per joist. Add 10% spares.`,
+            hint: `${formatNumber(screwsPerJoist, 0)} per board per fixing line. Add 10% spares.`,
           },
         ],
       },
@@ -237,14 +200,11 @@ export function computeDecking(inputs: Inputs): CalcOutput {
     order: [
       { item: `Decking ${formatMm(boardWidth)}`, qty: formatM(linearWaste, 2) },
       { item: `Stock @ ${formatM(stockLength, 2)}`, qty: formatCount(nStock, "pcs") },
-      { item: "Joists", qty: `${formatCount(nJoists, "pcs")} · ${formatM(joistLin, 2)}` },
-      { item: "Bearers", qty: `${formatCount(nBearers, "pcs")} · ${formatM(bearerLin, 2)}` },
-      { item: "Posts", qty: formatCount(nPosts, "pcs") },
       { item: "Deck screws", qty: formatCount(screws, "screws") },
     ],
     notes: [
-      "Boards run the length of the deck. Joists run across the width.",
-      "Confirm joist span tables for your board thickness and species.",
+      "Boards run the length of the deck, fixing lines run across the width.",
+      "Fixing centres should match your frame's actual joist spacing.",
       "Keep a 5–10 mm gap to walls and posts for drainage.",
     ],
     diagram: {

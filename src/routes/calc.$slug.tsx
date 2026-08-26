@@ -18,7 +18,6 @@ function CalcPage() {
   const hydrated = useStore((s) => s.hydrated);
   const saved = useStore((s) => s.inputsBySlug[slug]);
   const setInputsStore = useStore((s) => s.setInputs);
-  const touchRecent = useStore((s) => s.touchRecent);
 
   const defaults = useMemo(() => (calc ? defaultsFor(calc.fields) : {}), [calc]);
   const [inputs, setInputs] = useState<Inputs>(saved ?? defaults);
@@ -26,10 +25,8 @@ function CalcPage() {
   useEffect(() => {
     if (!calc) {
       void navigate({ to: "/" });
-      return;
     }
-    touchRecent(calc.slug);
-  }, [calc, navigate, touchRecent]);
+  }, [calc, navigate]);
 
   useEffect(() => {
     if (!calc) return;
@@ -50,37 +47,38 @@ function CalcPage() {
   const Icon = CALC_ICONS[calc.slug];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="-mt-2 flex flex-col gap-6 sm:-mt-4">
       <div className="flex flex-col gap-3">
         <Link
           to="/"
-          className="inline-flex h-11 w-fit items-center gap-2 text-sm text-muted hover:text-foreground"
+          className="inline-flex h-11 w-fit items-center gap-2 rounded-md px-1 text-sm text-muted transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
           All calculators
         </Link>
-        <div className="flex items-start gap-3">
-          {Icon ? <Icon className="mt-1 size-6 shrink-0" strokeWidth={1.75} /> : null}
+        <div className="flex items-start">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-              {calc.category}
-            </p>
-            <h1 className="font-display text-4xl font-semibold tracking-tight">{calc.name}</h1>
-            <p className="mt-1 text-muted">{calc.short}</p>
+            <h1 className="font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+              {calc.name}
+            </h1>
+            <p className="mt-1 text-sm text-muted sm:text-base">{calc.short}</p>
           </div>
         </div>
       </div>
 
-      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
-        <div className="rounded-xl bg-card p-4 shadow-border lg:sticky lg:top-20">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-8">
+        <aside className="flex flex-col gap-4 rounded-2xl border border-border bg-card/80 p-3 shadow-border lg:sticky lg:top-20 lg:p-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Job</p>
           <CalcForm fields={calc.fields} inputs={inputs} onChange={setInputs} />
+        </aside>
+        <div className="lg:pl-2">
+          <CalcResults
+            calc={calc}
+            inputs={inputs}
+            output={output}
+            onReset={() => setInputs(defaults)}
+          />
         </div>
-        <CalcResults
-          calc={calc}
-          inputs={inputs}
-          output={output}
-          onReset={() => setInputs(defaults)}
-        />
       </div>
     </div>
   );

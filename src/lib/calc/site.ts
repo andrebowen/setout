@@ -302,13 +302,33 @@ export function computeBrick(inputs: Inputs): CalcOutput {
   };
 }
 
-export const excavationFields: Field[] = [
+// ---------------------------------------------------------------------------
+// Site volume & tonnage — excavation, fill materials and asphalt, folded
+// into one calculator with a material/job selector (2026-08-25). All three
+// were the same shape (plan area × depth → volume × a swell/settle/waste
+// factor → order quantity), just wearing different presets — see MEMORY.md.
+// ---------------------------------------------------------------------------
+
+export const siteVolumeFields: Field[] = [
+  {
+    kind: "select",
+    key: "material",
+    label: "Material / job",
+    defaultValue: "gravel",
+    options: [
+      { value: "excavation", label: "Excavation (cut / spoil)" },
+      { value: "gravel", label: "Gravel / aggregate (fill)" },
+      { value: "soil", label: "Soil / garden mix (fill)" },
+      { value: "mulch", label: "Mulch (fill)" },
+      { value: "asphalt", label: "Asphalt (paving)" },
+    ],
+  },
   {
     kind: "number",
     key: "length",
     label: "Length",
     unit: "m",
-    defaultValue: 8,
+    defaultValue: 4,
     min: 0,
     step: 0.1,
   },
@@ -317,9 +337,9 @@ export const excavationFields: Field[] = [
     key: "width",
     label: "Width",
     unit: "m",
-    defaultValue: 0.45,
+    defaultValue: 2,
     min: 0,
-    step: 0.05,
+    step: 0.1,
   },
   {
     kind: "number",
@@ -329,6 +349,26 @@ export const excavationFields: Field[] = [
     defaultValue: 0.6,
     min: 0,
     step: 0.05,
+    hint: "Trench, footing or pad depth",
+    showWhen: { key: "material", in: ["excavation"] },
+  },
+  {
+    kind: "number",
+    key: "depthMm",
+    label: "Depth",
+    unit: "mm",
+    defaultValue: 50,
+    min: 10,
+    step: 5,
+    presets: [
+      { label: "25", value: 25 },
+      { label: "40", value: 40 },
+      { label: "50", value: 50 },
+      { label: "75", value: 75 },
+      { label: "150", value: 150 },
+    ],
+    hint: "Typical: asphalt 40–50 mm compacted, gravel/mulch path 50–75 mm, garden soil 100–150 mm",
+    showWhen: { key: "material", in: ["gravel", "soil", "mulch", "asphalt"] },
   },
   {
     kind: "number",
@@ -340,6 +380,7 @@ export const excavationFields: Field[] = [
     max: 50,
     step: 5,
     hint: "Loose spoil is bigger than the hole",
+    showWhen: { key: "material", in: ["excavation"] },
   },
   {
     kind: "number",
@@ -349,21 +390,54 @@ export const excavationFields: Field[] = [
     defaultValue: 8,
     min: 1,
     step: 0.5,
+    showWhen: { key: "material", in: ["excavation"] },
+  },
+  {
+    kind: "number",
+    key: "allowance",
+    label: "Compaction allowance",
+    unit: "%",
+    defaultValue: 10,
+    min: 0,
+    max: 30,
+    step: 5,
+    hint: "Loose fill settles — order extra so the finished depth holds",
+    showWhen: { key: "material", in: ["gravel", "soil", "mulch"] },
+  },
+  {
+    kind: "number",
+    key: "waste",
+    label: "Waste",
+    unit: "%",
+    defaultValue: 5,
+    min: 0,
+    max: 20,
+    step: 1,
+    showWhen: { key: "material", in: ["asphalt"] },
   },
 ];
 
-export function computeExcavation(inputs: Inputs): CalcOutput {
-  const length = num(inputs.length);
-  const width = num(inputs.width);
-  const depth = num(inputs.depth);
+const ASPHALT_DENSITY_T_PER_M3 = 2.4;
+
+const FILL_MATERIALS: Record<
+  string,
+  { label: string; bagLabel: string; bagYieldM3: number; densityTPerM3: number }
+> = {
+  gravel: { label: "Gravel", bagLabel: "20 kg bags", bagYieldM3: 0.0125, densityTPerM3: 1.6 },
+  soil: { label: "Soil", bagLabel: "25 L bags", bagYieldM3: 0.025, densityTPerM3: 1.3 },
+  mulch: { label: "Mulch", bagLabel: "70 L bags", bagYieldM3: 0.07, densityTPerM3: 0.3 },
+};
+
+function computeExcavationVolume(inputs: Inputs, area: number): CalcOutput {
+  const depth = num(inputs.depth, 0.6);
   const bulkage = num(inputs.bulkage, 25);
   const truck = num(inputs.truck, 8);
 
-  if (length <= 0 || width <= 0 || depth <= 0) {
-    return emptyOutput("Enter length, width and depth");
+  if (depth <= 0) {
+    return emptyOutput("Enter a depth");
   }
 
-  const inSitu = length * width * depth;
+  const inSitu = area * depth;
   const loose = inSitu * (1 + bulkage / 100);
   const loads = truck > 0 ? Math.ceil(loose / truck - 1e-9) : 0;
 
@@ -373,13 +447,13 @@ export function computeExcavation(inputs: Inputs): CalcOutput {
       { label: "In situ", value: formatM3(inSitu, 3) },
       { label: "Loose", value: formatM3(loose, 3) },
       { label: "Loads", value: formatNumber(loads, 0) },
-      { label: "Plan", value: formatM2(length * width) },
+      { label: "Plan", value: formatM2(area) },
     ],
     sections: [
       {
         title: "Cut",
         rows: [
-          { label: "Plan area", value: formatM2(length * width) },
+          { label: "Plan area", value: formatM2(area) },
           { label: "In-situ volume", value: formatM3(inSitu, 3), tone: "strong" },
           {
             label: `Loose with ${formatNumber(bulkage, 0)}% bulkage`,
@@ -402,4 +476,136 @@ export function computeExcavation(inputs: Inputs): CalcOutput {
       "This is a rectangular trench / pad. Batter the sides on deep cuts.",
     ],
   };
+}
+
+function computeAsphaltVolume(inputs: Inputs, area: number): CalcOutput {
+  const thickness = num(inputs.depthMm, 40);
+  const waste = num(inputs.waste, 5);
+
+  if (thickness <= 0) {
+    return emptyOutput("Enter a compacted thickness");
+  }
+
+  const volume = area * (thickness / 1000);
+  const tonnes = volume * ASPHALT_DENSITY_T_PER_M3;
+  const orderTonnes = tonnes * (1 + waste / 100);
+
+  return {
+    headline: `${formatNumber(orderTonnes, 2)} t to order`,
+    kpis: [
+      { label: "Area", value: formatM2(area) },
+      { label: "Volume", value: formatM3(volume, 3) },
+      { label: "Tonnes", value: `${formatNumber(tonnes, 2)} t` },
+      { label: "Order", value: `${formatNumber(orderTonnes, 2)} t` },
+    ],
+    sections: [
+      {
+        title: "Asphalt",
+        rows: [
+          { label: "Area", value: formatM2(area) },
+          { label: "Compacted thickness", value: formatMm(thickness) },
+          { label: "Volume", value: formatM3(volume, 3) },
+          {
+            label: "Tonnes (net)",
+            value: `${formatNumber(tonnes, 2)} t`,
+            hint: `At ${formatNumber(ASPHALT_DENSITY_T_PER_M3, 1)} t/m³ compacted`,
+          },
+          {
+            label: `Order with ${formatNumber(waste, 0)}% waste`,
+            value: `${formatNumber(orderTonnes, 2)} t`,
+            tone: "strong",
+          },
+        ],
+      },
+    ],
+    order: [{ item: "Hot mix asphalt", qty: `${formatNumber(orderTonnes, 2)} t` }],
+    notes: [
+      "2.4 t/m³ is a typical compacted dense-graded hot mix — confirm with your supplier, mix design varies.",
+      "This is compacted thickness, not loose-laid — asphalt compacts roughly 20–25% under the roller.",
+    ],
+  };
+}
+
+function computeFillVolume(inputs: Inputs, area: number, materialKey: string): CalcOutput {
+  const material = FILL_MATERIALS[materialKey] ?? FILL_MATERIALS.gravel;
+  const depth = num(inputs.depthMm, 75);
+  const allowance = num(inputs.allowance, 10);
+
+  if (depth <= 0) {
+    return emptyOutput("Enter a depth");
+  }
+
+  const net = area * (depth / 1000);
+  const order = net * (1 + allowance / 100);
+  const bags = Math.ceil(order / material.bagYieldM3 - 1e-9);
+  const tonnes = order * material.densityTPerM3;
+
+  const flags: CalcOutput["flags"] = [];
+  if (order >= 1) {
+    flags.push({
+      tone: "ok",
+      text: "Over ~1 m³, a bulk trailer-load from a landscape yard is usually cheaper than bags.",
+    });
+  }
+
+  return {
+    headline: `${formatM3(order, 3)} to order · ${material.label}`,
+    kpis: [
+      { label: "Area", value: formatM2(area) },
+      { label: "Net", value: formatM3(net, 3) },
+      { label: "Order", value: formatM3(order, 3) },
+      { label: "Bags", value: formatNumber(bags, 0) },
+    ],
+    flags,
+    sections: [
+      {
+        title: "Fill",
+        rows: [
+          { label: "Area", value: formatM2(area) },
+          { label: "Depth", value: formatMm(depth) },
+          { label: "Net volume", value: formatM3(net, 3) },
+          {
+            label: `Order with ${formatNumber(allowance, 0)}% allowance`,
+            value: formatM3(order, 3),
+            tone: "strong",
+          },
+          {
+            label: material.bagLabel,
+            value: formatCount(bags, "bags"),
+            hint: `${formatM3(material.bagYieldM3, 3)} yield per bag`,
+          },
+          {
+            label: "Approx weight",
+            value: `${formatNumber(tonnes, 1)} t`,
+            hint: `${formatNumber(material.densityTPerM3, 1)} t/m³ loose`,
+          },
+        ],
+      },
+    ],
+    order: [
+      { item: material.label, qty: formatM3(order, 3) },
+      { item: material.bagLabel, qty: formatCount(bags, "bags") },
+    ],
+    notes: [
+      "Bag yield is a hardware-store rule of thumb — check the bag, brands vary.",
+      "Landscape yards sell gravel, soil and mulch bulk by the m³ or by weight — ask which they quote.",
+      "Compaction allowance covers settling under foot traffic or light vehicles, not structural loading.",
+    ],
+  };
+}
+
+export function computeSiteVolume(inputs: Inputs): CalcOutput {
+  const materialKey = str(inputs.material, "gravel");
+  const length = num(inputs.length);
+  const width = num(inputs.width);
+
+  if (length <= 0 || width <= 0) {
+    return emptyOutput("Enter length and width");
+  }
+
+  const area = length * width;
+
+  if (materialKey === "excavation") return computeExcavationVolume(inputs, area);
+  if (materialKey === "asphalt") return computeAsphaltVolume(inputs, area);
+  return computeFillVolume(inputs, area, materialKey);
 }

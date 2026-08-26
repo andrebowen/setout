@@ -14,26 +14,27 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [hydrate]);
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
-      <div className="h-1 bg-foreground" />
-      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
-          <Link
-            to="/"
-            className="flex min-h-11 items-center gap-2.5 text-foreground"
-            aria-label="Setout home"
-          >
-            <Logo className="size-7 text-foreground" />
-            <span className="font-display text-xl font-semibold tracking-tight">
-              Setout
+    <div className="min-h-dvh bg-background text-foreground antialiased">
+      <header className="sticky top-0 z-30 border-b border-border/80 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/75">
+        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <Link
+              to="/"
+              className="flex min-h-11 shrink-0 items-center gap-2.5 rounded-md px-1 text-foreground"
+              aria-label="Setout home"
+            >
+              <Logo className="size-7 text-foreground" />
+              <span className="font-display text-xl font-bold tracking-[-0.04em]">
+                Setout
+              </span>
+            </Link>
+            <span className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-muted sm:inline">
+              Australian made · Metric first
             </span>
-            <span className="hidden rounded-full border border-border px-2 py-0.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted sm:inline">
-              Metric
-            </span>
-          </Link>
+          </div>
           <Link
             to="/jobs"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md px-2 text-sm font-medium text-foreground hover:bg-foreground/5"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md px-2.5 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
           >
             <ClipboardList className="size-4" />
             <span>Jobs</span>
@@ -45,7 +46,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:pt-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-5 sm:px-5 sm:pt-6">
+        {children}
+      </main>
     </div>
   );
 }

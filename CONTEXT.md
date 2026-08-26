@@ -29,9 +29,34 @@ Legend: ✓ Complete · → In Progress · · Pending
 ## Current Stage: Design Audit → Design System
 
 01-design-audit is done (full write-up in `stages/01-design-audit/output/design-audit.md`).
-One design-system decision has been applied ahead of formal 02 kickoff — the logo mark
-now reuses SlabSet's "S" geometry, redrawn in Setout's own dark-badge/cream palette
-(`src/components/logo.tsx`). Everything else in 02 through 08 is scaffolded only.
+Design-system work so far: the logo mark reuses SlabSet's "S" geometry, redrawn in
+Setout's own dark-badge/cream palette (`src/components/logo.tsx`); a calculator IA
+doctrine is written (`stages/02-design-system/output/ia-doctrine.md`); and, on Andre's
+explicit go-ahead, calculators from the doctrine's backlog have been built in two
+passes: **Gravel, soil & mulch fill volumes** (`slug: "fill"`, Site category), then
+(2026-08-25, prompted by a competitor comparison) **Asphalt** plus the entire
+**"Setout & Measuring"** cross-trade section the doctrine had scoped but not built —
+Check square, Equal spacing, Running measurements, Triangle, Mitre angle,
+Levelling (RL), Slope & fall, Arc setout, Area, Linear cut list — and Raked walls
+merged into Wall framing. Then (2026-08-25, prompted by a UI/IA/UX review, with
+star/favourites now live) the catalog was trimmed 26 → 21: Area dropped
+(redundant with the area KPI every trade calculator already shows); Excavation +
+Fill + Asphalt merged into one "Site volume & tonnage" calculator with a material
+selector; Running measurements folded into Equal spacing as a third mode; Mitre
+angle folded into Triangle as a fifth mode. Mitre angle was then split back out
+into its own calculator again (2026-08-26, Andre's call — it's not a Triangle
+mode), so the net trim is 26 → **22**. Three merges stuck (Area dropped;
+Excavation/Fill/Asphalt → Site volume & tonnage; Running measurements → Equal
+spacing), not cuts of real trade capability — see "Catalog trim" in `MEMORY.md`.
+22 calculators total, all with passing tests (`npm run --prefix Setout
+test`-style run via `node --experimental-strip-types --test
+src/lib/calc/calc.test.ts`, 25/25), clean `npm run typecheck`, clean `eslint` on
+every touched file, and a clean `npx vite build`.
+Everything else on the backlog (Retaining wall, Render/stucco, Stair compliance,
+compound/raked mitre, multi-point level run) stays [PLANNED]/pending — these were
+scoped, named exceptions for the calculator engine specifically, not a general
+green light into 04-build for the rest of the launch pipeline (dark mode, native
+nav, ASO, App Store submission, etc.).
 See `MEMORY.md` for full session history and reasoning.
 
 **Do not build or ship past design without Andre's explicit go-ahead** —
@@ -65,5 +90,6 @@ BuildSet) and the full calculator catalog before picking that up.
 - **Stack:** TanStack Start (React 19) + Tailwind v4 + Radix + Better Auth, built in the
   Grok App Builder sandbox — `AGENTS.md` in this folder is the sandbox contract, not a
   project-state file (that's this file + `MEMORY.md`).
-- **Calculators:** 14 built and live in `src/lib/calc/catalog.ts` — see `MEMORY.md` for
-  the full list and how it compares to the retired BuildSet backlog.
+- **Calculators:** 22 built and live in `src/lib/calc/catalog.ts` (trimmed from 26 on
+  2026-08-25/26) — see `MEMORY.md` for the full list and how it compares to the
+  retired BuildSet backlog.

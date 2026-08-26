@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-r
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { AppShell } from "@/components/app-shell";
+import { SplashScreen } from "@/components/splash-screen";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
@@ -15,15 +16,15 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       {
         name: "description",
-        content: "Metric site calculations for builders and trades — decking, roofing, stairs, balustrades and more.",
+        content: "Metric site calculations for builders and trades, no conversions: decking, roofing, stairs, balustrades and more.",
       },
       { name: "theme-color", content: "#EFECE3" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/icon-180.svg" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -43,6 +44,7 @@ function RootDocument() {
       </head>
       <body>
         <PreviewHostBridge />
+        <SplashScreen />
         <AuthProvider>
           <AppShell>
             <Outlet />

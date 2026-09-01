@@ -625,8 +625,8 @@ function renderSettings(){
     </div>
     <div class="sec">Theme</div>
     <div class="paper-row">
-      <button class="paper-opt${S.paper === "warm" ? " on" : ""}" type="button" data-paper="warm"><span class="swatch warm"></span>Cream / ink</button>
-      <button class="paper-opt${S.paper === "cool" ? " on" : ""}" type="button" data-paper="cool"><span class="swatch cool"></span>White / grey</button>
+      <button class="paper-opt${S.paper === "warm" ? " on" : ""}" type="button" data-paper="warm"><span class="swatch warm"></span>Cream</button>
+      <button class="paper-opt${S.paper === "cool" ? " on" : ""}" type="button" data-paper="cool"><span class="swatch cool"></span>White</button>
     </div>
     <div class="sec">Support</div>
     <div class="group">
@@ -949,3 +949,12 @@ if (!location.hash){
   else location.hash = "calcs";
 }
 render();
+
+(function splash(){
+  const el = document.getElementById("splash");
+  if (!el) return;
+  setTimeout(function(){
+    el.classList.add("off");
+    setTimeout(function(){ el.remove(); }, 400);
+  }, 1400);
+})();

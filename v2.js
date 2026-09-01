@@ -93,7 +93,7 @@ const S = {
   jobId: null, calc: "square", pending: false, fromSave: false, forJob: false,
   qCalcs: "", qJobs: "", vals: {}, dispUnits: {}, out: null,
   bagKg: 20, theme: "light", paper: "warm", bold: false,
-  dec: "point", awake: false, restored: false
+  dec: "point", restored: false
 };
 
 function engineOf(id){
@@ -622,7 +622,6 @@ function renderSettings(){
     <div class="appear">${skins}</div>
     <div class="group">
       <div class="row" data-bold><div class="tx"><div class="t">Bold text</div></div><span class="tog${S.bold ? " on" : ""}"><i></i></span></div>
-      <div class="row" data-awake><div class="tx"><div class="t">Keep screen on</div><div class="m">For the slab in the sun.</div></div><span class="tog${S.awake ? " on" : ""}"><i></i></span></div>
     </div>
     <div class="sec">Theme</div>
     <div class="paper-row">
@@ -866,8 +865,6 @@ document.getElementById("app").addEventListener("click", e => {
   if (dec){ S.dec = dec.dataset.dec; render(); return; }
   const bold = hit(e, ".row[data-bold]");
   if (bold){ S.bold = !S.bold; render(); return; }
-  const awake = hit(e, ".row[data-awake]");
-  if (awake){ S.awake = !S.awake; render(); return; }
   const close = hit(e, "[data-close]");
   if (close){ closeSheet(); return; }
   const openSaved = hit(e, "[data-open-job]");

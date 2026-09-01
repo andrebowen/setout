@@ -608,7 +608,9 @@ function renderSettings(){
   el.innerHTML = `
     ${pageHead("Settings")}
     <div class="sec">Units</div>
-    <div class="about">International metric. mm, m, kg. No inches, feet, pounds.</div>
+    <div class="group">
+      <div class="row"><div class="tx"><div class="t">International metric. mm, m, kg. No inches, feet, pounds.</div></div></div>
+    </div>
     <div class="sec">Decimal</div>
     <div class="group">
       <div class="presets">

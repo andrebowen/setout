@@ -619,8 +619,8 @@ function renderSettings(){
       </div>
     </div>
     <div class="sec">Appearance</div>
-    <div class="appear">
-      <div class="appear-skins">${skins}</div>
+    <div class="appear">${skins}</div>
+    <div class="group">
       <div class="paper-row">
         <button class="paper-opt${S.paper === "warm" ? " on" : ""}" type="button" data-paper="warm"><span class="swatch warm"></span>Cream</button>
         <button class="paper-opt${S.paper === "cool" ? " on" : ""}" type="button" data-paper="cool"><span class="swatch cool"></span>White</button>

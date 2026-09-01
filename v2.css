@@ -231,8 +231,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset
 .skin-phone .c{flex:1;border-radius:5px}
 .skin-phone.lt.warm .b,.skin-phone.lt.warm .c{background:#f5e8cd}
 .skin-phone.lt.cool .b,.skin-phone.lt.cool .c{background:#f0f0f0}
-.skin-phone.dk.warm .b,.skin-phone.dk.warm .c{background:#231d11}
-.skin-phone.dk.cool .b,.skin-phone.dk.cool .c{background:#1e2126}
+.skin-phone.dk.warm .b,.skin-phone.dk.warm .c{background:#e8dcc4}
+.skin-phone.dk.cool .b,.skin-phone.dk.cool .c{background:#d8dce0}
 .skin-dot{width:22px;height:22px;border-radius:11px;border:2px solid var(--faint);display:flex;align-items:center;justify-content:center}
 .skin.on .skin-dot{background:var(--ink);border-color:var(--ink)}
 .skin-dot svg{width:12px;height:12px;display:none;color:var(--cream)}

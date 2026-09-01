@@ -92,7 +92,7 @@ const jobs = [
 const S = {
   jobId: null, calc: "square", pending: false, fromSave: false, forJob: false,
   qCalcs: "", qJobs: "", vals: {}, dispUnits: {}, out: null,
-  bagKg: 20, theme: "light", paper: "warm", bold: false, type: 1,
+  bagKg: 20, theme: "light", paper: "warm", bold: false,
   dec: "point", awake: false, restored: false
 };
 
@@ -556,7 +556,6 @@ function applyPrefs(){
   r.dataset.theme = S.theme;
   r.dataset.paper = S.paper;
   r.dataset.bold = S.bold ? "1" : "0";
-  r.dataset.type = String(S.type);
 }
 
 function renderSettings(){
@@ -622,18 +621,6 @@ function renderSettings(){
     <div class="sec">Appearance</div>
     <div class="appear">${skins}</div>
     <div class="group">
-      <div class="fblock">
-        <div class="fline"><label>Text size</label></div>
-        <div class="type-row">
-          <span class="a s">A</span>
-          <div class="type-track">
-            <button class="type-tick${S.type === 0 ? " on" : ""}" type="button" data-type="0" aria-label="Small"></button>
-            <button class="type-tick${S.type === 1 ? " on" : ""}" type="button" data-type="1" aria-label="Default"></button>
-            <button class="type-tick${S.type === 2 ? " on" : ""}" type="button" data-type="2" aria-label="Large"></button>
-          </div>
-          <span class="a l">A</span>
-        </div>
-      </div>
       <div class="row" data-bold><div class="tx"><div class="t">Bold text</div></div><span class="tog${S.bold ? " on" : ""}"><i></i></span></div>
       <div class="row" data-awake><div class="tx"><div class="t">Keep screen on</div><div class="m">For the slab in the sun.</div></div><span class="tog${S.awake ? " on" : ""}"><i></i></span></div>
     </div>
@@ -877,8 +864,6 @@ document.getElementById("app").addEventListener("click", e => {
   if (paper){ S.paper = paper.dataset.paper; render(); return; }
   const dec = hit(e, "button[data-dec]");
   if (dec){ S.dec = dec.dataset.dec; render(); return; }
-  const type = hit(e, "button[data-type]");
-  if (type){ S.type = Number(type.dataset.type); render(); return; }
   const bold = hit(e, ".row[data-bold]");
   if (bold){ S.bold = !S.bold; render(); return; }
   const awake = hit(e, ".row[data-awake]");

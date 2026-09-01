@@ -60,8 +60,6 @@ html[data-theme="dark"][data-paper="cool"]{
   --cream:#000000;
   --desk:#0a0a0a;
 }
-html[data-type="0"]{ --ts:0.92 }
-html[data-type="2"]{ --ts:1.14 }
 html[data-bold="1"] .row .t,
 html[data-bold="1"] .h,
 html[data-bold="1"] .pill,
@@ -246,14 +244,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset
 .swatch{width:14px;height:14px;border-radius:7px;flex-shrink:0;border:1px solid #c9b896}
 .swatch.cool{background:#ffffff;border-color:#c4c4c4}
 .swatch.warm{background:#fff7e3}
-.type-row{display:flex;align-items:center;gap:10px;padding:4px 16px 14px}
-.type-row .a{font-weight:600;color:var(--mute);line-height:1}
-.type-row .a.s{font-size:13px}
-.type-row .a.l{font-size:22px}
-.type-track{flex:1;display:flex;align-items:center;justify-content:space-between;height:22px;position:relative}
-.type-track::before{content:"";position:absolute;left:11px;right:11px;top:9px;height:4px;background:var(--line);border-radius:2px}
-.type-tick{width:22px;height:22px;border-radius:11px;background:var(--faint);border:0;position:relative;z-index:1}
-.type-tick.on{background:var(--ink)}
 .about{margin:4px 20px 8px;font-size:calc(15px * var(--ts));font-weight:400;color:var(--text);line-height:1.45}
 .legal{margin:0 20px 16px;font-size:15px;font-weight:400;color:var(--text);line-height:1.45}
 .legal p + p{margin-top:12px}

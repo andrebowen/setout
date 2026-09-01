@@ -609,7 +609,7 @@ function renderSettings(){
     ${pageHead("Settings")}
     <div class="sec">Units</div>
     <div class="group">
-      <div class="row"><div class="tx"><div class="t">International metric. mm, m, kg. No inches, feet, pounds.</div></div></div>
+      <div class="row"><div class="tx"><div class="t">International metric</div></div></div>
     </div>
     <div class="sec">Decimal</div>
     <div class="group">
@@ -620,13 +620,12 @@ function renderSettings(){
     </div>
     <div class="sec">Appearance</div>
     <div class="appear">${skins}</div>
-    <div class="group">
-      <div class="row" data-bold><div class="tx"><div class="t">Bold text</div></div><span class="tog${S.bold ? " on" : ""}"><i></i></span></div>
-    </div>
-    <div class="sec">Theme</div>
     <div class="paper-row">
       <button class="paper-opt${S.paper === "warm" ? " on" : ""}" type="button" data-paper="warm"><span class="swatch warm"></span>Cream</button>
       <button class="paper-opt${S.paper === "cool" ? " on" : ""}" type="button" data-paper="cool"><span class="swatch cool"></span>White</button>
+    </div>
+    <div class="group">
+      <div class="row" data-bold><div class="tx"><div class="t">Bold text</div></div><span class="tog${S.bold ? " on" : ""}"><i></i></span></div>
     </div>
     <div class="sec">Support</div>
     <div class="group">

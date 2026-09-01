@@ -949,6 +949,10 @@ document.getElementById("app").addEventListener("click", e => {
 window.addEventListener("hashchange", render);
 
 function fitPhone(){
+  if (innerWidth <= 720){
+    document.documentElement.style.setProperty("--fit", "1");
+    return;
+  }
   const w = innerWidth;
   const h = innerHeight;
   const s = Math.min(1, (w - 16) / 393, (h - 16) / 852);
